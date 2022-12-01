@@ -1,9 +1,7 @@
 project(CollisionTest)
 
 file(GLOB sources
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h
         ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/../helpers/include/*.h
         ${CMAKE_CURRENT_SOURCE_DIR}/../helpers/src/*.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
         )

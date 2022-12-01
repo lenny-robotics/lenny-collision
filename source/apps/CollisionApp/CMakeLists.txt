@@ -5,9 +5,7 @@ fetch_lenny_repository(gui-opengl master)
 project(CollisionApp)
 
 file(GLOB sources
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h
         ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/../helpers/include/*.h
         ${CMAKE_CURRENT_SOURCE_DIR}/../helpers/src/*.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
         )
