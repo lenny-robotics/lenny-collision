@@ -48,7 +48,7 @@ void Rectangle::drawScene(const Eigen::VectorXd& parentState, const Eigen::Vecto
     for (int i = 0; i < 3; i++)
         R_c.col(i) = parent->computeVector(parentState, orientation.matrix().col(i));
 
-    tools::Renderer::I->drawPlane(P_c, Eigen::QuaternionD(R_c), dimensions, color);
+    tools::Renderer::I->drawRoundedPlane(P_c, Eigen::QuaternionD(R_c), dimensions, safetyMargin, color);
 }
 
 void Rectangle::drawGui(const std::string& description) {
