@@ -10,8 +10,8 @@ uint ParameterConstraint::getConstraintNumber() const {
 }
 
 void ParameterConstraint::computeConstraint(Eigen::VectorXd& C, const Eigen::VectorXd& t) const {
-    this->num_C = 2 * t.size();
-    C.resize(this->num_C);
+    setConstraintNumber(t);
+    C.resize(getConstraintNumber());
     int iter = 0;
     for (int i = 0; i < t.size(); i++) {
         C[iter++] = -t[i] - 0.0;
@@ -20,8 +20,8 @@ void ParameterConstraint::computeConstraint(Eigen::VectorXd& C, const Eigen::Vec
 }
 
 void ParameterConstraint::computeJacobian(Eigen::SparseMatrixD& pCpT, const Eigen::VectorXd& t) const {
-    this->num_C = 2 * t.size();
-    pCpT.resize(this->num_C, t.size());
+    setConstraintNumber(t);
+    pCpT.resize(getConstraintNumber(), t.size());
     pCpT.setZero();
     int iter = 0;
     for (int i = 0; i < t.size(); i++) {
@@ -31,8 +31,12 @@ void ParameterConstraint::computeJacobian(Eigen::SparseMatrixD& pCpT, const Eige
 }
 
 void ParameterConstraint::computeTensor(Eigen::TensorD& p2CpT2, const Eigen::VectorXd& t) const {
-    this->num_C = 2 * t.size();
     p2CpT2.resize(Eigen::Vector3i(getConstraintNumber(), t.size(), t.size()));
+}
+
+void ParameterConstraint::setConstraintNumber(const Eigen::VectorXd& t) const {
+    this->num_C = 2 * t.size();
+    this->softificationWeights.setOnes(this->num_C);
 }
 
 }  // namespace lenny::collision

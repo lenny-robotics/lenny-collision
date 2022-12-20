@@ -8,6 +8,7 @@ tools::FiniteDifference Solver::fd = tools::FiniteDifference("collision::Solver"
 
 Solver::Solver(const Primitive::SPtr primitive_A, const Primitive::SPtr primitive_B, const Eigen::VectorXd& states)
     : objective(primitive_A, primitive_B, states) {
+    fd.absTol = 1e-3;
     optimizer.useSparseSolver = false;
     optimizer.printInfos = false;
 }

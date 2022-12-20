@@ -15,6 +15,9 @@ public:
     void computeTensor(Eigen::TensorD& p2CpT2, const Eigen::VectorXd& t) const override;
 
 private:
+    void setConstraintNumber(const Eigen::VectorXd& t) const;
+
+private:
     mutable uint num_C = 0;
 };
 

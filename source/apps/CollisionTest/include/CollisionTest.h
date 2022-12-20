@@ -48,12 +48,12 @@ void applyCollisionTest() {
         Eigen::MatrixXd p_jac_est, p_jac_ana;
         parent->estimatePointJacobian(p_jac_est, rbState, p_local);
         parent->computePointJacobian(p_jac_ana, rbState, p_local);
-        fd.performFDCheck(p_jac_est, p_jac_ana, "Point Jacobian");
+        fd.performCheck(p_jac_est, p_jac_ana, "Point Jacobian");
 
         Eigen::TensorD p_ten_est, p_ten_ana;
         parent->estimatePointTensor(p_ten_est, rbState, p_local);
         parent->computePointTensor(p_ten_ana, rbState, p_local);
-        fd.performFDCheck(p_ten_est, p_ten_ana, "Point Tensor");
+        fd.performCheck(p_ten_est, p_ten_ana, "Point Tensor");
 
         //--- Vector
         const Eigen::Vector3d v_local = Eigen::Vector3d::Random();
@@ -64,12 +64,12 @@ void applyCollisionTest() {
         Eigen::MatrixXd v_jac_est, v_jac_ana;
         parent->estimateVectorJacobian(v_jac_est, rbState, v_local);
         parent->computeVectorJacobian(v_jac_ana, rbState, v_local);
-        fd.performFDCheck(v_jac_est, v_jac_ana, "Vector Jacobian");
+        fd.performCheck(v_jac_est, v_jac_ana, "Vector Jacobian");
 
         Eigen::TensorD v_ten_est, v_ten_ana;
         parent->estimateVectorTensor(v_ten_est, rbState, v_local);
         parent->computeVectorTensor(v_ten_ana, rbState, v_local);
-        fd.performFDCheck(v_ten_est, v_ten_ana, "Vector Tensor");
+        fd.performCheck(v_ten_est, v_ten_ana, "Vector Tensor");
     }
 
     //--- Test primitives
@@ -89,27 +89,27 @@ void applyCollisionTest() {
             Eigen::MatrixXd pPpS_est, pPpS_ana;
             primitive->estimate_pPpS(pPpS_est, rbState, t);
             primitive->compute_pPpS(pPpS_ana, rbState, t);
-            fd.performFDCheck(pPpS_est, pPpS_ana, "pPpS");
+            fd.performCheck(pPpS_est, pPpS_ana, "pPpS");
 
             Eigen::TensorD p2PpS2_est, p2PpS2_ana;
             primitive->estimate_p2PpS2(p2PpS2_est, rbState, t);
             primitive->compute_p2PpS2(p2PpS2_ana, rbState, t);
-            fd.performFDCheck(p2PpS2_est, p2PpS2_ana, "p2PpS2");
+            fd.performCheck(p2PpS2_est, p2PpS2_ana, "p2PpS2");
 
             Eigen::MatrixXd pPpT_est, pPpT_ana;
             primitive->estimate_pPpT(pPpT_est, rbState, t);
             primitive->compute_pPpT(pPpT_ana, rbState, t);
-            fd.performFDCheck(pPpT_est, pPpT_ana, "pPpT");
+            fd.performCheck(pPpT_est, pPpT_ana, "pPpT");
 
             Eigen::TensorD p2PpT2_est, p2PpT2_ana;
             primitive->estimate_p2PpT2(p2PpT2_est, rbState, t);
             primitive->compute_p2PpT2(p2PpT2_ana, rbState, t);
-            fd.performFDCheck(p2PpT2_est, p2PpT2_ana, "p2PpT2");
+            fd.performCheck(p2PpT2_est, p2PpT2_ana, "p2PpT2");
 
             Eigen::TensorD p2PpSpT_est, p2PpSpT_ana;
             primitive->estimate_p2PpSpT(p2PpSpT_est, rbState, t);
             primitive->compute_p2PpSpT(p2PpSpT_ana, rbState, t);
-            fd.performFDCheck(p2PpSpT_est, p2PpSpT_ana, "p2PpSpT");
+            fd.performCheck(p2PpSpT_est, p2PpSpT_ana, "p2PpSpT");
         }
 
         for (const auto& primitive : primitives) {
