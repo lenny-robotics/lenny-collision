@@ -1,2 +1,2 @@
 # lenny-optimization
-fetch_lenny_repository(optimization master)
+fetch_lenny_repository(optimization softification-weights)
