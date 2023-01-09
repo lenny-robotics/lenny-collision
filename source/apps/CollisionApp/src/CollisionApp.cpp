@@ -72,7 +72,7 @@ void CollisionApp::drawGui() {
 
 void CollisionApp::mouseButtonCallback(double xPos, double yPos, int button, int action) {
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-        static const gui::Model sphere(LENNY_GUI_PROJECT_FOLDER "/data/meshes/sphere.obj");
+        static const gui::Model sphere(LENNY_GUI_OPENGL_FOLDER "/data/meshes/sphere.obj");
         const auto ray = camera.getRayFromScreenCoordinates(xPos, yPos);
 
         selectedRBState = nullptr;
