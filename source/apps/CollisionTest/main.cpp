@@ -1,7 +1,6 @@
 #include "CollisionTest.h"
 
 int main() {
-    lenny::applyCollisionTest();
-
-    return 0;
+    testing::InitGoogleTest();
+    return RUN_ALL_TESTS();
 }

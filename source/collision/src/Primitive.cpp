@@ -92,34 +92,34 @@ void Primitive::estimate_p2PpSpT(Eigen::TensorD& p2PpSpT, const Eigen::VectorXd&
     fd.estimateTensor(p2PpSpT, t, eval, 3, s.size());
 }
 
-void Primitive::test_pPpS(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const {
+bool Primitive::test_pPpS(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const {
     auto eval = [&](Eigen::VectorXd& P, const Eigen::VectorXd& x) -> void { P = compute_P(x, t); };
     auto anal = [&](Eigen::MatrixXd& pPpS, const Eigen::VectorXd& x) -> void { compute_pPpS(pPpS, x, t); };
-    fd.testMatrix(eval, anal, s, "pPpS", 3, true);
+    return fd.testMatrix(eval, anal, s, "pPpS", 3, true);
 }
 
-void Primitive::test_p2PpS2(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const {
+bool Primitive::test_p2PpS2(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const {
     auto eval = [&](Eigen::MatrixXd& pPpS, const Eigen::VectorXd& x) -> void { compute_pPpS(pPpS, x, t); };
     auto anal = [&](Eigen::TensorD& p2PpS2, const Eigen::VectorXd& x) -> void { compute_p2PpS2(p2PpS2, x, t); };
-    fd.testTensor(eval, anal, s, "p2PpS2", 3, s.size());
+    return fd.testTensor(eval, anal, s, "p2PpS2", 3, s.size());
 }
 
-void Primitive::test_pPpT(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const {
+bool Primitive::test_pPpT(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const {
     auto eval = [&](Eigen::VectorXd& P, const Eigen::VectorXd& x) -> void { P = compute_P(s, x); };
     auto anal = [&](Eigen::MatrixXd& pPpT, const Eigen::VectorXd& x) -> void { compute_pPpT(pPpT, s, x); };
-    fd.testMatrix(eval, anal, t, "pPpT", 3, true);
+    return fd.testMatrix(eval, anal, t, "pPpT", 3, true);
 }
 
-void Primitive::test_p2PpT2(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const {
+bool Primitive::test_p2PpT2(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const {
     auto eval = [&](Eigen::MatrixXd& pPpT, const Eigen::VectorXd& x) -> void { compute_pPpT(pPpT, s, x); };
     auto anal = [&](Eigen::TensorD& p2PpT2, const Eigen::VectorXd& x) -> void { compute_p2PpT2(p2PpT2, s, x); };
-    fd.testTensor(eval, anal, t, "p2PpT2", 3, t.size());
+    return fd.testTensor(eval, anal, t, "p2PpT2", 3, t.size());
 }
 
-void Primitive::test_p2PpSpT(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const {
+bool Primitive::test_p2PpSpT(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const {
     auto eval = [&](Eigen::MatrixXd& pPpS, const Eigen::VectorXd& x) -> void { compute_pPpS(pPpS, s, x); };
     auto anal = [&](Eigen::TensorD& p2PpSpT, const Eigen::VectorXd& x) -> void { compute_p2PpSpT(p2PpSpT, s, x); };
-    fd.testTensor(eval, anal, t, "p2PpSpT", 3, s.size());
+    return fd.testTensor(eval, anal, t, "p2PpSpT", 3, s.size());
 }
 
 int Primitive::getSizeOfS() const {

@@ -25,11 +25,11 @@ public:
     void compute_p2DpTpS(Eigen::MatrixXd& p2DpTpS, const Eigen::VectorXd& s, const Eigen::VectorXd& t) const;
 
     //--- Tests
-    void test_pDpS(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const;
-    void test_p2DpS2(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const;
-    void test_pDpT(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const;
-    void test_p2DpT2(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const;
-    void test_p2DpTpS(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const;
+    bool test_pDpS(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const;
+    bool test_p2DpS2(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const;
+    bool test_pDpT(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const;
+    bool test_p2DpT2(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const;
+    bool test_p2DpTpS(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const;
 
     //--- Helpers
     std::pair<Eigen::Vector3d, Eigen::Vector3d> compute_Ps(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const;

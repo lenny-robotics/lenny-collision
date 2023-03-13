@@ -31,11 +31,11 @@ public:
     void estimate_p2PpSpT(Eigen::TensorD& p2PpSpT, const Eigen::VectorXd& s, const Eigen::VectorXd& t) const;
 
     //--- Tests
-    void test_pPpS(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const;
-    void test_p2PpS2(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const;
-    void test_pPpT(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const;
-    void test_p2PpT2(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const;
-    void test_p2PpSpT(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const;
+    bool test_pPpS(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const;
+    bool test_p2PpS2(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const;
+    bool test_pPpT(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const;
+    bool test_p2PpT2(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const;
+    bool test_p2PpSpT(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const;
 
     //--- Helpers
     int getSizeOfS() const;

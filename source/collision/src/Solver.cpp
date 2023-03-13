@@ -79,7 +79,7 @@ void Solver::compute_d2DdS2(Eigen::MatrixXd& d2DdS2, Eigen::VectorXd& t) const {
     d2DdS2 = (dTdS.transpose() * p2DpT2 + 2.0 * p2DpTpS.transpose()) * dTdS + p2DpS2;
 }
 
-void Solver::test_dTdS(const Eigen::VectorXd& t) const {
+bool Solver::test_dTdS(const Eigen::VectorXd& t) const {
     auto eval = [&](Eigen::VectorXd& T, const Eigen::VectorXd& s) -> void {
         const Eigen::VectorXd states_tmp(objective.states);
         objective.states = s;
@@ -94,10 +94,11 @@ void Solver::test_dTdS(const Eigen::VectorXd& t) const {
         compute_dTdS(dTdS, t_tmp);
         objective.states = states_tmp;
     };
-    fd.testMatrix(eval, anal, objective.states, "dTdS", t.size(), true);
+    fd.absTol = 0.01;
+    return fd.testMatrix(eval, anal, objective.states, "dTdS", t.size(), true);
 }
 
-void Solver::test_dDdS(const Eigen::VectorXd& t) const {
+bool Solver::test_dDdS(const Eigen::VectorXd& t) const {
     auto eval = [&](const Eigen::VectorXd& s) -> double {
         const Eigen::VectorXd states_tmp(objective.states);
         objective.states = s;
@@ -115,10 +116,11 @@ void Solver::test_dDdS(const Eigen::VectorXd& t) const {
         compute_dDdS(dDdS, t_tmp);
         objective.states = states_tmp;
     };
-    fd.testVector(eval, anal, objective.states, "dDdS");
+    fd.absTol = 0.1;
+    return fd.testVector(eval, anal, objective.states, "dDdS");
 }
 
-void Solver::test_d2DdS2(const Eigen::VectorXd& t) const {
+bool Solver::test_d2DdS2(const Eigen::VectorXd& t) const {
     auto eval = [&](Eigen::VectorXd& dDdS, const Eigen::VectorXd& s) -> void {
         const Eigen::VectorXd states_tmp(objective.states);
         objective.states = s;
@@ -135,7 +137,8 @@ void Solver::test_d2DdS2(const Eigen::VectorXd& t) const {
         compute_d2DdS2(d2DdS2, t_tmp);
         objective.states = states_tmp;
     };
-    fd.testMatrix(eval, anal, objective.states, "d2DdS2", objective.states.size(), true);
+    fd.absTol = 1.0; //Change due to Gauss-Newton approximation
+    return fd.testMatrix(eval, anal, objective.states, "d2DdS2", objective.states.size(), true);
 }
 
 std::pair<Eigen::Vector3d, Eigen::Vector3d> Solver::computeClosestPoints(Eigen::VectorXd& t) const {

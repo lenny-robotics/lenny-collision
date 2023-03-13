@@ -1,5 +1,6 @@
 #pragma once
 
+#include <gtest/gtest.h>
 #include <lenny/collision/Api.h>
 #include <lenny/collision/Primitives.h>
 #include <lenny/collision/Solver.h>
@@ -9,10 +10,9 @@
 
 #include "EulerAngleRigidBodyParent.h"
 
-namespace lenny {
-
-void applyCollisionTest() {
+TEST(collision, test) {
     //--- Initialize
+    using namespace lenny;
     EulerAngleRigidBodyParent::SPtr parent = std::make_shared<EulerAngleRigidBodyParent>();
     tools::FiniteDifference fd("Estimation Tester");
 
@@ -42,34 +42,34 @@ void applyCollisionTest() {
         //--- Point
         const Eigen::Vector3d p_local = Eigen::Vector3d::Random();
         std::cout << parent->computePoint(rbState, p_local).transpose() << std::endl;
-        parent->testPointJacobian(rbState, p_local);
-        parent->testPointTensor(rbState, p_local);
+        EXPECT_TRUE(parent->testPointJacobian(rbState, p_local));
+        EXPECT_TRUE(parent->testPointTensor(rbState, p_local));
 
         Eigen::MatrixXd p_jac_est, p_jac_ana;
         parent->estimatePointJacobian(p_jac_est, rbState, p_local);
         parent->computePointJacobian(p_jac_ana, rbState, p_local);
-        fd.performCheck(p_jac_est, p_jac_ana, "Point Jacobian");
+        EXPECT_TRUE(fd.performCheck(p_jac_est, p_jac_ana, "Point Jacobian"));
 
         Eigen::TensorD p_ten_est, p_ten_ana;
         parent->estimatePointTensor(p_ten_est, rbState, p_local);
         parent->computePointTensor(p_ten_ana, rbState, p_local);
-        fd.performCheck(p_ten_est, p_ten_ana, "Point Tensor");
+        EXPECT_TRUE(fd.performCheck(p_ten_est, p_ten_ana, "Point Tensor"));
 
         //--- Vector
         const Eigen::Vector3d v_local = Eigen::Vector3d::Random();
         std::cout << parent->computeVector(rbState, v_local).transpose() << std::endl;
-        parent->testVectorJacobian(rbState, v_local);
-        parent->testVectorTensor(rbState, v_local);
+        EXPECT_TRUE(parent->testVectorJacobian(rbState, v_local));
+        EXPECT_TRUE(parent->testVectorTensor(rbState, v_local));
 
         Eigen::MatrixXd v_jac_est, v_jac_ana;
         parent->estimateVectorJacobian(v_jac_est, rbState, v_local);
         parent->computeVectorJacobian(v_jac_ana, rbState, v_local);
-        fd.performCheck(v_jac_est, v_jac_ana, "Vector Jacobian");
+        EXPECT_TRUE(fd.performCheck(v_jac_est, v_jac_ana, "Vector Jacobian"));
 
         Eigen::TensorD v_ten_est, v_ten_ana;
         parent->estimateVectorTensor(v_ten_est, rbState, v_local);
         parent->computeVectorTensor(v_ten_ana, rbState, v_local);
-        fd.performCheck(v_ten_est, v_ten_ana, "Vector Tensor");
+        EXPECT_TRUE(fd.performCheck(v_ten_est, v_ten_ana, "Vector Tensor"));
     }
 
     //--- Test primitives
@@ -79,37 +79,37 @@ void applyCollisionTest() {
 
             //--- Derivatives
             std::cout << primitive->compute_P(rbState, t).transpose() << std::endl;
-            primitive->test_pPpT(rbState, t);
-            primitive->test_p2PpT2(rbState, t);
-            primitive->test_pPpS(rbState, t);
-            primitive->test_p2PpS2(rbState, t);
-            primitive->test_p2PpSpT(rbState, t);
+            EXPECT_TRUE(primitive->test_pPpT(rbState, t));
+            EXPECT_TRUE(primitive->test_p2PpT2(rbState, t));
+            EXPECT_TRUE(primitive->test_pPpS(rbState, t));
+            EXPECT_TRUE(primitive->test_p2PpS2(rbState, t));
+            EXPECT_TRUE(primitive->test_p2PpSpT(rbState, t));
 
             //--- Estimates
             Eigen::MatrixXd pPpS_est, pPpS_ana;
             primitive->estimate_pPpS(pPpS_est, rbState, t);
             primitive->compute_pPpS(pPpS_ana, rbState, t);
-            fd.performCheck(pPpS_est, pPpS_ana, "pPpS");
+            EXPECT_TRUE(fd.performCheck(pPpS_est, pPpS_ana, "pPpS"));
 
             Eigen::TensorD p2PpS2_est, p2PpS2_ana;
             primitive->estimate_p2PpS2(p2PpS2_est, rbState, t);
             primitive->compute_p2PpS2(p2PpS2_ana, rbState, t);
-            fd.performCheck(p2PpS2_est, p2PpS2_ana, "p2PpS2");
+            EXPECT_TRUE(fd.performCheck(p2PpS2_est, p2PpS2_ana, "p2PpS2"));
 
             Eigen::MatrixXd pPpT_est, pPpT_ana;
             primitive->estimate_pPpT(pPpT_est, rbState, t);
             primitive->compute_pPpT(pPpT_ana, rbState, t);
-            fd.performCheck(pPpT_est, pPpT_ana, "pPpT");
+            EXPECT_TRUE(fd.performCheck(pPpT_est, pPpT_ana, "pPpT"));
 
             Eigen::TensorD p2PpT2_est, p2PpT2_ana;
             primitive->estimate_p2PpT2(p2PpT2_est, rbState, t);
             primitive->compute_p2PpT2(p2PpT2_ana, rbState, t);
-            fd.performCheck(p2PpT2_est, p2PpT2_ana, "p2PpT2");
+            EXPECT_TRUE(fd.performCheck(p2PpT2_est, p2PpT2_ana, "p2PpT2"));
 
             Eigen::TensorD p2PpSpT_est, p2PpSpT_ana;
             primitive->estimate_p2PpSpT(p2PpSpT_est, rbState, t);
             primitive->compute_p2PpSpT(p2PpSpT_ana, rbState, t);
-            fd.performCheck(p2PpSpT_est, p2PpSpT_ana, "p2PpSpT");
+            EXPECT_TRUE(fd.performCheck(p2PpSpT_est, p2PpSpT_ana, "p2PpSpT"));
         }
 
         for (const auto& primitive : primitives) {
@@ -123,10 +123,8 @@ void applyCollisionTest() {
                 double testRadius;
                 p->get(testPosition, testRadius);
 
-                if (position.isApprox(testPosition) && fabs(radius - testRadius) < 1e-5)
-                    LENNY_LOG_PRINT(tools::Logger::GREEN, "Sphere getter / setter test PASSED\n")
-                else
-                    LENNY_LOG_PRINT(tools::Logger::RED, "Sphere getter / setter test FAILED\n")
+                EXPECT_TRUE(position.isApprox(testPosition) && fabs(radius - testRadius) < 1e-5);
+
             } else if (auto p = std::dynamic_pointer_cast<collision::Capsule>(primitive)) {
                 const Eigen::Vector3d startPosition = Eigen::Vector3d::Random();
                 const Eigen::Vector3d endPosition = Eigen::Vector3d::Random();
@@ -137,10 +135,8 @@ void applyCollisionTest() {
                 double testRadius;
                 p->get(testStartPosition, testEndPosition, testRadius);
 
-                if (startPosition.isApprox(testStartPosition) && endPosition.isApprox(testEndPosition) && fabs(radius - testRadius) < 1e-5)
-                    LENNY_LOG_PRINT(tools::Logger::GREEN, "Capsule getter / setter test PASSED\n")
-                else
-                    LENNY_LOG_PRINT(tools::Logger::RED, "Capsule getter / setter test FAILED\n")
+                EXPECT_TRUE(startPosition.isApprox(testStartPosition) && endPosition.isApprox(testEndPosition) && fabs(radius - testRadius) < 1e-5);
+
             } else if (auto p = std::dynamic_pointer_cast<collision::Rectangle>(primitive)) {
                 const Eigen::Vector3d center = Eigen::Vector3d::Random();
                 const Eigen::QuaternionD orientation = Eigen::QuaternionD ::UnitRandom();
@@ -155,11 +151,9 @@ void applyCollisionTest() {
                 double testSafetyMargin;
                 p->get(testCenter, testOrientation, testDimension, testSafetyMargin);
 
-                if (center.isApprox(testCenter) && orientation.matrix().isApprox(testOrientation.matrix()) && dimension.isApprox(testDimension) &&
-                    fabs(safetyMargin - testSafetyMargin) < 1e-5)
-                    LENNY_LOG_PRINT(tools::Logger::GREEN, "Rectangle getter / setter test PASSED\n")
-                else
-                    LENNY_LOG_PRINT(tools::Logger::RED, "Rectangle getter / setter test FAILED\n")
+                EXPECT_TRUE(center.isApprox(testCenter) && orientation.matrix().isApprox(testOrientation.matrix()) && dimension.isApprox(testDimension) &&
+                            fabs(safetyMargin - testSafetyMargin) < 1e-5);
+
             } else if (auto p = std::dynamic_pointer_cast<collision::Box>(primitive)) {
                 const Eigen::Vector3d center = Eigen::Vector3d::Random();
                 const Eigen::QuaternionD orientation = Eigen::QuaternionD ::UnitRandom();
@@ -175,11 +169,8 @@ void applyCollisionTest() {
                 double testSafetyMargin;
                 p->get(testCenter, testOrientation, testDimension, testSafetyMargin);
 
-                if (center.isApprox(testCenter) && orientation.matrix().isApprox(testOrientation.matrix()) && dimension.isApprox(testDimension) &&
-                    fabs(safetyMargin - testSafetyMargin) < 1e-5)
-                    LENNY_LOG_PRINT(tools::Logger::GREEN, "Box getter / setter test PASSED\n")
-                else
-                    LENNY_LOG_PRINT(tools::Logger::RED, "Box getter / setter test FAILED\n")
+                EXPECT_TRUE(center.isApprox(testCenter) && orientation.matrix().isApprox(testOrientation.matrix()) && dimension.isApprox(testDimension) &&
+                            fabs(safetyMargin - testSafetyMargin) < 1e-5);
             }
         }
     }
@@ -197,11 +188,11 @@ void applyCollisionTest() {
                 const Eigen::VectorXd t = Eigen::VectorXd::Random(distanceCalculator.getTotalSizeOfT());
 
                 std::cout << distanceCalculator.compute_D(s, t) << std::endl;
-                distanceCalculator.test_pDpS(s, t);
-                distanceCalculator.test_p2DpS2(s, t);
-                distanceCalculator.test_pDpT(s, t);
-                distanceCalculator.test_p2DpT2(s, t);
-                distanceCalculator.test_p2DpTpS(s, t);
+                EXPECT_TRUE(distanceCalculator.test_pDpS(s, t));
+                EXPECT_TRUE(distanceCalculator.test_p2DpS2(s, t));
+                EXPECT_TRUE(distanceCalculator.test_pDpT(s, t));
+                EXPECT_TRUE(distanceCalculator.test_p2DpT2(s, t));
+                EXPECT_TRUE(distanceCalculator.test_p2DpTpS(s, t));
             }
         }
 
@@ -212,8 +203,8 @@ void applyCollisionTest() {
                 const Eigen::VectorXd t = Eigen::VectorXd::Random(objective.distanceCalculator.getTotalSizeOfT());
 
                 std::cout << objective.computeValue(t) << std::endl;
-                objective.testGradient(t);
-                objective.testHessian(t);
+                EXPECT_TRUE(objective.testGradient(t));
+                EXPECT_TRUE(objective.testHessian(t));
             }
         }
 
@@ -226,9 +217,9 @@ void applyCollisionTest() {
                 Eigen::VectorXd t = 0.5 * Eigen::VectorXd::Ones(solver.objective.distanceCalculator.getTotalSizeOfT());
                 solver.compute_T(t);
                 std::cout << t.transpose() << std::endl;
-                solver.test_dTdS(t);
-                solver.test_dDdS(t);
-                solver.test_d2DdS2(t);
+                EXPECT_TRUE(solver.test_dTdS(t));
+                EXPECT_TRUE(solver.test_dDdS(t));
+                EXPECT_TRUE(solver.test_d2DdS2(t));
             }
         }
 
@@ -268,5 +259,3 @@ void applyCollisionTest() {
     collision::to_json(js, loadPrimitives);
     std::cout << std::setw(2) << js << std::endl;
 }
-
-}  // namespace lenny

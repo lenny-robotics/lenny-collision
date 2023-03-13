@@ -175,34 +175,34 @@ void DistanceCalculator::compute_p2DpTpS(Eigen::MatrixXd& p2DpTpS, const Eigen::
     }
 }
 
-void DistanceCalculator::test_pDpS(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const {
+bool DistanceCalculator::test_pDpS(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const {
     auto eval = [&](const Eigen::VectorXd& x) -> double { return compute_D(x, t); };
     auto anal = [&](Eigen::VectorXd& pDpS, const Eigen::VectorXd& x) -> void { compute_pDpS(pDpS, x, t); };
-    fd.testVector(eval, anal, s, "pDpS");
+    return fd.testVector(eval, anal, s, "pDpS");
 }
 
-void DistanceCalculator::test_p2DpS2(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const {
+bool DistanceCalculator::test_p2DpS2(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const {
     auto eval = [&](Eigen::VectorXd& pDpS, const Eigen::VectorXd& x) -> void { compute_pDpS(pDpS, x, t); };
     auto anal = [&](Eigen::MatrixXd& p2DpS2, const Eigen::VectorXd& x) -> void { compute_p2DpS2(p2DpS2, x, t); };
-    fd.testMatrix(eval, anal, s, "p2DpS2", s.size(), true);
+    return fd.testMatrix(eval, anal, s, "p2DpS2", s.size(), true);
 }
 
-void DistanceCalculator::test_pDpT(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const {
+bool DistanceCalculator::test_pDpT(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const {
     auto eval = [&](const Eigen::VectorXd& x) -> double { return compute_D(s, x); };
     auto anal = [&](Eigen::VectorXd& pDpT, const Eigen::VectorXd& x) -> void { compute_pDpT(pDpT, s, x); };
-    fd.testVector(eval, anal, t, "pDpT");
+    return fd.testVector(eval, anal, t, "pDpT");
 }
 
-void DistanceCalculator::test_p2DpT2(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const {
+bool DistanceCalculator::test_p2DpT2(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const {
     auto eval = [&](Eigen::VectorXd& pDpT, const Eigen::VectorXd& x) -> void { compute_pDpT(pDpT, s, x); };
     auto anal = [&](Eigen::MatrixXd& p2DpT2, const Eigen::VectorXd& x) -> void { compute_p2DpT2(p2DpT2, s, x); };
-    fd.testMatrix(eval, anal, t, "p2DpT2", t.size(), true);
+    return fd.testMatrix(eval, anal, t, "p2DpT2", t.size(), true);
 }
 
-void DistanceCalculator::test_p2DpTpS(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const {
+bool DistanceCalculator::test_p2DpTpS(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const {
     auto eval = [&](Eigen::VectorXd& pDpT, const Eigen::VectorXd& x) -> void { compute_pDpT(pDpT, x, t); };
     auto anal = [&](Eigen::MatrixXd& p2DpTpS, const Eigen::VectorXd& x) -> void { compute_p2DpTpS(p2DpTpS, x, t); };
-    fd.testMatrix(eval, anal, s, "p2DpTpS", t.size(), true);
+    return fd.testMatrix(eval, anal, s, "p2DpTpS", t.size(), true);
 }
 
 std::pair<Eigen::Vector3d, Eigen::Vector3d> DistanceCalculator::compute_Ps(const Eigen::VectorXd& s, const Eigen::VectorXd& t) const {
