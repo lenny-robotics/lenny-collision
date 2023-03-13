@@ -21,9 +21,9 @@ public:
     void compute_d2DdS2(Eigen::MatrixXd& d2DdS2, Eigen::VectorXd& t) const;
 
     //--- Tests
-    void test_dTdS(const Eigen::VectorXd& t) const;
-    void test_dDdS(const Eigen::VectorXd& t) const;
-    void test_d2DdS2(const Eigen::VectorXd& t) const;
+    bool test_dTdS(const Eigen::VectorXd& t) const;
+    bool test_dDdS(const Eigen::VectorXd& t) const;
+    bool test_d2DdS2(const Eigen::VectorXd& t) const;
 
     //--- Helpers
     std::pair<Eigen::Vector3d, Eigen::Vector3d> computeClosestPoints(Eigen::VectorXd& t) const;

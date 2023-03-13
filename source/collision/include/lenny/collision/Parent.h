@@ -24,8 +24,8 @@ public:
     void estimatePointJacobian(Eigen::MatrixXd& jacobian, const Eigen::VectorXd& state, const Eigen::Vector3d& p_primitive) const;
     void estimatePointTensor(Eigen::TensorD& tensor, const Eigen::VectorXd& state, const Eigen::Vector3d& p_primitive) const;
 
-    void testPointJacobian(const Eigen::VectorXd& state, const Eigen::Vector3d& p_primitive) const;
-    void testPointTensor(const Eigen::VectorXd& state, const Eigen::Vector3d& p_primitive) const;
+    bool testPointJacobian(const Eigen::VectorXd& state, const Eigen::Vector3d& p_primitive) const;
+    bool testPointTensor(const Eigen::VectorXd& state, const Eigen::Vector3d& p_primitive) const;
 
     //--- Compute vector and its derivatives from primitive vector
     virtual Eigen::Vector3d computeVector(const Eigen::VectorXd& state, const Eigen::Vector3d& v_primitive) const = 0;
@@ -35,8 +35,8 @@ public:
     void estimateVectorJacobian(Eigen::MatrixXd& jacobian, const Eigen::VectorXd& state, const Eigen::Vector3d& v_primitive) const;
     void estimateVectorTensor(Eigen::TensorD& tensor, const Eigen::VectorXd& state, const Eigen::Vector3d& v_primitive) const;
 
-    void testVectorJacobian(const Eigen::VectorXd& state, const Eigen::Vector3d& v_primitive) const;
-    void testVectorTensor(const Eigen::VectorXd& state, const Eigen::Vector3d& v_primitive) const;
+    bool testVectorJacobian(const Eigen::VectorXd& state, const Eigen::Vector3d& v_primitive) const;
+    bool testVectorTensor(const Eigen::VectorXd& state, const Eigen::Vector3d& v_primitive) const;
 
     //--- Helpers
     virtual int getStateDimension() const = 0;
