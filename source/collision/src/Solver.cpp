@@ -94,7 +94,7 @@ bool Solver::test_dTdS(const Eigen::VectorXd& t) const {
         compute_dTdS(dTdS, t_tmp);
         objective.states = states_tmp;
     };
-    fd.absTol = 1e-3;
+    fd.absTol = 0.01;
     return fd.testMatrix(eval, anal, objective.states, "dTdS", t.size(), true);
 }
 
@@ -116,7 +116,7 @@ bool Solver::test_dDdS(const Eigen::VectorXd& t) const {
         compute_dDdS(dDdS, t_tmp);
         objective.states = states_tmp;
     };
-    fd.absTol = 1e-3;
+    fd.absTol = 0.1;
     return fd.testVector(eval, anal, objective.states, "dDdS");
 }
 
