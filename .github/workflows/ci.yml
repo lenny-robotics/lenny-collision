@@ -23,6 +23,7 @@ jobs:
           ssh-private-key: |
             ${{ secrets.SSH_PRIVATE_KEY_LENNY_OPTIMIZATION }}
             ${{ secrets.SSH_PRIVATE_KEY_LENNY_TOOLS }}
+            ${{ secrets.SSH_PRIVATE_KEY_LENNY_GUI_OPENGL }}
 
     #Install dependencies
     - name: Install Linux Libraries
