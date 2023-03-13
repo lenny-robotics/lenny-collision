@@ -1,17 +1,25 @@
 #include "CollisionApp.h"
 
 #include <lenny/collision/Solver.h>
+#include <lenny/gui/Guizmo.h>
 #include <lenny/gui/ImGui.h>
-#include <lenny/gui/ImGuizmo.h>
 #include <lenny/gui/Model.h>
 #include <lenny/gui/Renderer.h>
 
 namespace lenny {
 
 CollisionApp::CollisionApp() : gui::Application("CollisionApp") {
-    showOrigin = false;
-    showGround = false;
+    //Setup scene
+    const auto [width, height] = getCurrentWindowSize();
+    scenes.emplace_back(std::make_shared<gui::Scene>("Scene-1", width, height));
+    scenes.back()->f_drawScene = [&]() -> void { drawScene(); };
+    scenes.back()->f_mouseButtonCallback = [&](double xPos, double yPos, Ray ray, int button, int action) -> void {
+        mouseButtonCallback(xPos, yPos, ray, button, action);
+    };
+    scenes.back()->showOrigin = false;
+    scenes.back()->showGround = false;
 
+    //Initialize state
     rbStates[B][1] = 1.0;
 }
 
@@ -41,9 +49,6 @@ void CollisionApp::drawScene() const {
 }
 
 void CollisionApp::drawGui() {
-    gui::Application::drawGui();
-
-    //--- ImGui
     ImGui::Begin("Main Menu");
 
     if (ImGui::TreeNode("Primitives")) {
@@ -55,38 +60,32 @@ void CollisionApp::drawGui() {
     ImGui::EnumSelection<PRIMITIVES>("Primitive - A", primitiveIndices[A]);
     ImGui::EnumSelection<PRIMITIVES>("Primitive - B", primitiveIndices[B]);
 
-    //--- ImGuizmo
-    if (selectedRBState) {
-        ImGui::SetNextItemOpen(true);
-        if (ImGui::TreeNode("ImGuizmo")) {
-            tools::Transformation trafo = parent->rigidBody.getTransformationFromState(*selectedRBState);
-            static Eigen::Vector3d scale = Eigen::Vector3d::Ones();
-            ImGuizmo::useWidget(trafo.position, trafo.orientation, scale, camera.getViewMatrix(), camera.getProjectionMatrix());
-            *selectedRBState = parent->rigidBody.getStateFromTransformation(trafo);
-            ImGui::TreePop();
-        }
-    }
-
     ImGui::End();
 }
 
-void CollisionApp::mouseButtonCallback(double xPos, double yPos, int button, int action) {
+void CollisionApp::drawGuizmo() {
+    if (selectedRBState) {
+        tools::Transformation trafo = parent->rigidBody.getTransformationFromState(*selectedRBState);
+        static Eigen::Vector3d scale = Eigen::Vector3d::Ones();
+        gui::Guizmo::useWidget(trafo.position, trafo.orientation, scale);
+        *selectedRBState = parent->rigidBody.getStateFromTransformation(trafo);
+    }
+}
+
+void CollisionApp::mouseButtonCallback(double xPos, double yPos, Ray ray, int button, int action) {
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         static const gui::Model sphere(LENNY_GUI_OPENGL_FOLDER "/data/meshes/sphere.obj");
-        const auto ray = camera.getRayFromScreenCoordinates(xPos, yPos);
 
         selectedRBState = nullptr;
         for (Eigen::VectorXd& rbState : rbStates) {
             const tools::Transformation trafo = parent->rigidBody.getTransformationFromState(rbState);
-            const auto hitInfo = sphere.hitByRay(trafo.position, trafo.orientation, 0.5 * Eigen::Vector3d::Ones(), ray);
+            const auto hitInfo = sphere.hitByRay(trafo.position, trafo.orientation, Eigen::Vector3d::Ones(), ray);
             if (hitInfo.has_value()) {
                 selectedRBState = &rbState;
                 break;
             }
         }
     }
-
-    gui::Application::mouseButtonCallback(xPos, yPos, button, action);
 }
 
 }  // namespace lenny
