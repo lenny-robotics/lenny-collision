@@ -30,7 +30,7 @@ void CollisionApp::drawScene() const {
     collision::Solver solver(primitives[primitiveIndices[A]], primitives[primitiveIndices[B]], states);
 
     //Compute t
-    Eigen::VectorXd t = 0.5 * Eigen::VectorXd::Ones(solver.getSizeOFT());
+    Eigen::VectorXd t = 0.5 * Eigen::VectorXd::Ones(solver.getSizeOfT());
     solver.compute_T(t);
 
     //Compute shortest distance

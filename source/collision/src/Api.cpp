@@ -7,7 +7,7 @@ void Api::compute_T(Eigen::VectorXd& t, const PrimitiveInfo& pi_a, const Primiti
     Eigen::VectorXd states(pi_a.second.size() + pi_b.second.size());
     states << pi_a.second, pi_b.second;
     Solver solver(pi_a.first, pi_b.first, states);
-    t = 0.5 * Eigen::VectorXd::Ones(solver.getSizeOFT());
+    t = 0.5 * Eigen::VectorXd::Ones(solver.getSizeOfT());
     solver.compute_T(t, forFD);
 }
 

@@ -14,16 +14,27 @@ Solver::Solver(const Primitive::SPtr primitive_A, const Primitive::SPtr primitiv
 }
 
 void Solver::compute_T(Eigen::VectorXd& t, bool forFD) const {
+    //Check properties
     if (t.size() != objective.distanceCalculator.getTotalSizeOfT())
         LENNY_LOG_ERROR("Input t is incorrect!");
     if (t.size() == 0)
         return;
 
+    //Optimize for t
     const bool previousSetting = optimizer.printInfos;
     optimizer.printInfos = forFD ? false : previousSetting;
     optimizer.solverResidual = forFD ? 1e-12 : 1e-6;
     optimizer.optimize(t, objective, 100);
     optimizer.printInfos = previousSetting;
+
+    //Apply additional projection step
+    if(!forFD && applyAdditionalProjectionStep && objective.distanceCalculator.compute_D(objective.states, t) < 1e-3){
+        auto [t_A, t_B] = objective.distanceCalculator.getTs(t);
+        objective.distanceCalculator.primitive_A->project(t_A);
+        objective.distanceCalculator.primitive_B->project(t_B);
+        t << t_A, t_B;
+        LENNY_LOG_DEBUG("Projection step applied!")
+    }
 }
 
 void Solver::compute_dTdS(Eigen::MatrixXd& dTdS, const Eigen::VectorXd& t) const {
@@ -36,15 +47,15 @@ void Solver::compute_dTdS(Eigen::MatrixXd& dTdS, const Eigen::VectorXd& t) const
     optimization::utils::solveLinearSystem(dTdS, p2VpT2, -p2VpTpS, "dTdS", true);
 }
 
-double Solver::compute_D(Eigen::VectorXd& t) const {
-    ensureTandSareInSync(t);
+double Solver::compute_D(const Eigen::VectorXd& t) const {
+    checkIfTandSAreInSync(t);
 
     const double safetyMargins = objective.distanceCalculator.primitive_A->getSafetyMargin() + objective.distanceCalculator.primitive_B->getSafetyMargin();
     return objective.distanceCalculator.compute_D(objective.states, t) - safetyMargins * safetyMargins;
 }
 
-void Solver::compute_dDdS(Eigen::VectorXd& dDdS, Eigen::VectorXd& t) const {
-    ensureTandSareInSync(t);
+void Solver::compute_dDdS(Eigen::VectorXd& dDdS, const Eigen::VectorXd& t) const {
+    checkIfTandSAreInSync(t);
 
     Eigen::VectorXd pDpT(t.size());
     objective.distanceCalculator.compute_pDpT(pDpT, objective.states, t);
@@ -61,8 +72,8 @@ void Solver::compute_dDdS(Eigen::VectorXd& dDdS, Eigen::VectorXd& t) const {
 /**
  * COMMENT: This is "only" the Gauss-Newton approximation of the Hessian, and not the "true Hessian"
  */
-void Solver::compute_d2DdS2(Eigen::MatrixXd& d2DdS2, Eigen::VectorXd& t) const {
-    ensureTandSareInSync(t);
+void Solver::compute_d2DdS2(Eigen::MatrixXd& d2DdS2, const Eigen::VectorXd& t) const {
+    checkIfTandSAreInSync(t);
 
     Eigen::MatrixXd p2DpT2(t.size(), t.size());
     objective.distanceCalculator.compute_p2DpT2(p2DpT2, objective.states, t);
@@ -141,25 +152,24 @@ bool Solver::test_d2DdS2(const Eigen::VectorXd& t) const {
     return fd.testMatrix(eval, anal, objective.states, "d2DdS2", objective.states.size(), true);
 }
 
-std::pair<Eigen::Vector3d, Eigen::Vector3d> Solver::computeClosestPoints(Eigen::VectorXd& t) const {
-    ensureTandSareInSync(t);
+std::pair<Eigen::Vector3d, Eigen::Vector3d> Solver::computeClosestPoints(const Eigen::VectorXd& t) const {
+    checkIfTandSAreInSync(t);
     return objective.distanceCalculator.compute_Ps(objective.states, t);
 }
 
-bool Solver::ensureTandSareInSync(Eigen::VectorXd& t) const {
+bool Solver::checkIfTandSAreInSync(const Eigen::VectorXd& t) const {
     objective.distanceCalculator.checkInputs(objective.states, t);
 
     Eigen::VectorXd gradient(t.size());
     objective.computeGradient(gradient, t);
     if (gradient.norm() > 1e-5) {
-        LENNY_LOG_WARNING("t and s should be in sync, but they are not... Making the corresponding computations again.")
-        compute_T(t, false);
+        LENNY_LOG_DEBUG("t and s are not in sync...")
         return false;
     }
     return true;
 }
 
-int Solver::getSizeOFT() const {
+int Solver::getSizeOfT() const {
     return objective.distanceCalculator.getTotalSizeOfT();
 }
 
