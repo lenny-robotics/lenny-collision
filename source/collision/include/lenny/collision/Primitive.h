@@ -42,6 +42,7 @@ public:
     int getSizeOfT() const;
     double getSafetyMargin() const;
     void printInfos() const;
+    virtual void project(Eigen::VectorXd& t) const {}
 
     //--- Drawing
     virtual void drawScene(const Eigen::VectorXd& parentState, const Eigen::Vector4d& color) const = 0;

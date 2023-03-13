@@ -16,9 +16,9 @@ public:
     void compute_dTdS(Eigen::MatrixXd& dTdS, const Eigen::VectorXd& t) const;
 
     //--- Compute D and derivatives
-    double compute_D(Eigen::VectorXd& t) const;
-    void compute_dDdS(Eigen::VectorXd& dDdS, Eigen::VectorXd& t) const;
-    void compute_d2DdS2(Eigen::MatrixXd& d2DdS2, Eigen::VectorXd& t) const;
+    double compute_D(const Eigen::VectorXd& t) const;
+    void compute_dDdS(Eigen::VectorXd& dDdS, const Eigen::VectorXd& t) const;
+    void compute_d2DdS2(Eigen::MatrixXd& d2DdS2, const Eigen::VectorXd& t) const;
 
     //--- Tests
     bool test_dTdS(const Eigen::VectorXd& t) const;
@@ -26,14 +26,15 @@ public:
     bool test_d2DdS2(const Eigen::VectorXd& t) const;
 
     //--- Helpers
-    std::pair<Eigen::Vector3d, Eigen::Vector3d> computeClosestPoints(Eigen::VectorXd& t) const;
-    bool ensureTandSareInSync(Eigen::VectorXd& t) const;
-    int getSizeOFT() const;
+    std::pair<Eigen::Vector3d, Eigen::Vector3d> computeClosestPoints(const Eigen::VectorXd& t) const;
+    bool checkIfTandSAreInSync(const Eigen::VectorXd& t) const;
+    int getSizeOfT() const;
 
 public:
     //--- Members
     collision::TotalObjective objective;
     mutable optimization::NewtonOptimizer optimizer = optimization::NewtonOptimizer("CollisionSolver");
+    inline static bool applyAdditionalProjectionStep = true; //If true, an additional projection step for box primitives is applied
 
 private:
     static tools::FiniteDifference fd;
