@@ -14,7 +14,7 @@ public:
     //--- Helpers
     void set(const Eigen::Vector3d& center, const Eigen::QuaternionD& orientation, const Eigen::Vector3d& dimensions, const double& safetyMargin);
     void get(Eigen::Vector3d& center, Eigen::QuaternionD& orientation, Eigen::Vector3d& dimensions, double& safetyMargin) const;
-    void project(Eigen::VectorXd& t) const override;
+    double getSafetyMargin(const double& D) const override;
 
     //--- Drawing
     void drawScene(const Eigen::VectorXd& parentState, const Eigen::Vector4d& color) const override;

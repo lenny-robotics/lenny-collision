@@ -14,27 +14,16 @@ Solver::Solver(const Primitive::SPtr primitive_A, const Primitive::SPtr primitiv
 }
 
 void Solver::compute_T(Eigen::VectorXd& t, bool forFD) const {
-    //Check properties
     if (t.size() != objective.distanceCalculator.getTotalSizeOfT())
         LENNY_LOG_ERROR("Input t is incorrect!");
     if (t.size() == 0)
         return;
 
-    //Optimize for t
     const bool previousSetting = optimizer.printInfos;
     optimizer.printInfos = forFD ? false : previousSetting;
     optimizer.solverResidual = forFD ? 1e-12 : 1e-6;
     optimizer.optimize(t, objective, 100);
     optimizer.printInfos = previousSetting;
-
-    //Apply additional projection step
-    if(!forFD && applyAdditionalProjectionStep && objective.distanceCalculator.compute_D(objective.states, t) < 1e-3){
-        auto [t_A, t_B] = objective.distanceCalculator.getTs(t);
-        objective.distanceCalculator.primitive_A->project(t_A);
-        objective.distanceCalculator.primitive_B->project(t_B);
-        t << t_A, t_B;
-        LENNY_LOG_DEBUG("Projection step applied!")
-    }
 }
 
 void Solver::compute_dTdS(Eigen::MatrixXd& dTdS, const Eigen::VectorXd& t) const {
@@ -50,8 +39,9 @@ void Solver::compute_dTdS(Eigen::MatrixXd& dTdS, const Eigen::VectorXd& t) const
 double Solver::compute_D(const Eigen::VectorXd& t) const {
     checkIfTandSAreInSync(t);
 
-    const double safetyMargins = objective.distanceCalculator.primitive_A->getSafetyMargin() + objective.distanceCalculator.primitive_B->getSafetyMargin();
-    return objective.distanceCalculator.compute_D(objective.states, t) - safetyMargins * safetyMargins;
+    const double D = objective.distanceCalculator.compute_D(objective.states, t);
+    const double safetyMargins = objective.distanceCalculator.primitive_A->getSafetyMargin(D) + objective.distanceCalculator.primitive_B->getSafetyMargin(D);
+    return D - safetyMargins * safetyMargins;
 }
 
 void Solver::compute_dDdS(Eigen::VectorXd& dDdS, const Eigen::VectorXd& t) const {
@@ -148,7 +138,7 @@ bool Solver::test_d2DdS2(const Eigen::VectorXd& t) const {
         compute_d2DdS2(d2DdS2, t_tmp);
         objective.states = states_tmp;
     };
-    fd.absTol = 1.0; //Change due to Gauss-Newton approximation
+    fd.absTol = 1.0;  //Change due to Gauss-Newton approximation
     return fd.testMatrix(eval, anal, objective.states, "d2DdS2", objective.states.size(), true);
 }
 

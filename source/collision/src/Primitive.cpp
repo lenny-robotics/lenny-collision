@@ -130,7 +130,7 @@ int Primitive::getSizeOfT() const {
     return vectors.size();
 }
 
-double Primitive::getSafetyMargin() const {
+double Primitive::getSafetyMargin(const double& D) const {
     return safetyMargin;
 }
 

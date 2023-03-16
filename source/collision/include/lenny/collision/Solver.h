@@ -34,7 +34,6 @@ public:
     //--- Members
     collision::TotalObjective objective;
     mutable optimization::NewtonOptimizer optimizer = optimization::NewtonOptimizer("CollisionSolver");
-    inline static bool applyAdditionalProjectionStep = true; //If true, an additional projection step for box primitives is applied
 
 private:
     static tools::FiniteDifference fd;

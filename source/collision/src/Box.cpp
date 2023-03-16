@@ -35,27 +35,11 @@ void Box::get(Eigen::Vector3d& center, Eigen::QuaternionD& orientation, Eigen::V
     safetyMargin = this->safetyMargin;
 }
 
-//Project onto closest surface
-
-void Box::project(Eigen::VectorXd& t) const {
-    checkInputs(Eigen::VectorXd::Zero(getSizeOfS()), t);
-
-    double minVal = HUGE_VALF;
-    int index = -1;
-    bool lower = true;
-    for (int i = 0; i < getSizeOfT(); i++) {
-        if (fabs(t[i] - 0.0) < minVal) {
-            minVal = fabs(t[i] - 0.0);
-            index = i;
-            lower = true;
-        } else if (fabs(t[1] - 1.0) < minVal) {
-            minVal = fabs(t[i] - 1.0);
-            index = i;
-            lower = false;
-        }
-    }
-
-    t[index] = lower ? 0.0 : 1.0;
+double Box::getSafetyMargin(const double& D) const {
+    double margin = this->safetyMargin;
+    if (D < 1e-3)
+        margin += 0.5 * std::min(std::min(vectors.at(0).norm(), vectors.at(1).norm()), vectors.at(2).norm());
+    return margin;
 }
 
 void Box::drawScene(const Eigen::VectorXd& parentState, const Eigen::Vector4d& color) const {
