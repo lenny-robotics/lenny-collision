@@ -1,6 +1,7 @@
 #include "CollisionApp.h"
 
 #include <lenny/collision/Solver.h>
+#include <lenny/gui/Gui.h>
 #include <lenny/gui/Guizmo.h>
 #include <lenny/gui/ImGui.h>
 #include <lenny/gui/Model.h>
@@ -57,8 +58,8 @@ void CollisionApp::drawGui() {
         ImGui::TreePop();
     }
 
-    ImGui::EnumSelection<PRIMITIVES>("Primitive - A", primitiveIndices[A]);
-    ImGui::EnumSelection<PRIMITIVES>("Primitive - B", primitiveIndices[B]);
+    gui::Gui::I->EnumSelection<PRIMITIVES>("Primitive - A", primitiveIndices[A]);
+    gui::Gui::I->EnumSelection<PRIMITIVES>("Primitive - B", primitiveIndices[B]);
 
     ImGui::End();
 }
